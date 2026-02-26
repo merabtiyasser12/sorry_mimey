@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>رسالة خاصة</title>
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: radial-gradient(circle at top, #1a1a2e, #0f0c29);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    direction: rtl;
+    color: white;
+}
+
+/* قلوب */
+.heart {
+    position: absolute;
+    bottom: -10px;
+    font-size: 18px;
+    animation: floatUp 9s linear infinite;
+    opacity: 0.6;
+}
+
+@keyframes floatUp {
+    0% {transform: translateY(0) scale(1); opacity: 0;}
+    10% {opacity: 0.6;}
+    100% {transform: translateY(-120vh) scale(1.6); opacity: 0;}
+}
+
+.container {
+    text-align: center;
+    background: rgba(255,255,255,0.07);
+    padding: 40px;
+    border-radius: 22px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.6);
+    width: 90%;
+    max-width: 430px;
+    animation: fadeIn 1s ease;
+    z-index: 10;
+}
+
+h1 { font-size: 22px; margin-bottom: 20px; }
+
+.btns {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+button {
+    padding: 12px 22px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+.open { background: #00ffd5; color: #000; }
+.nope { background: #ff4d6d; color: #fff; }
+
+button:hover { transform: scale(1.08); }
+
+.card { display: none; animation: fadeIn 1s ease; }
+
+.big-heart { font-size: 60px; animation: pulse 1.4s infinite; }
+
+@keyframes pulse {
+    0% {transform: scale(1);}
+    50% {transform: scale(1.25);}
+    100% {transform: scale(1);}
+}
+
+.emoji {
+    font-size: 45px;
+    margin: 12px 0;
+    animation: float 2s infinite ease-in-out;
+}
+
+.message {
+    background: rgba(255,255,255,0.1);
+    padding: 22px;
+    border-radius: 15px;
+    margin-top: 15px;
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.log {
+    margin-top: 15px;
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(25px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+@keyframes float {
+    0% {transform: translateY(0);}
+    50% {transform: translateY(-8px);}
+    100% {transform: translateY(0);}
+}
+</style>
+</head>
+
+<body>
+
+<audio id="bgMusic" loop>
+    <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_3b1e4c8d3f.mp3" type="audio/mpeg">
+</audio>
+
+<div class="container" id="main">
+    <h1 id="title">عندك رسالة خاصة 💌</h1>
+    <div class="btns">
+        <button class="open" onclick="openCard()">فتح البطاقة</button>
+        <button class="nope" id="noBtn" onclick="refuse()">عدم فتح البطاقة</button>
+    </div>
+</div>
+
+<div class="container card" id="card">
+    <div class="big-heart">🫀</div>
+    <div class="emoji">🥺👉👈</div>
+    <h1 id="nameTitle">🤍</h1>
+    <div class="message" id="msgBox"></div>
+    <div class="log" id="logTime"></div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const name = params.get("name") || "مريم";
+
+document.getElementById("nameTitle").innerText = name + " 🤍";
+
+let noCount = 0;
+let musicStarted = false;
+
+const messages = [
+    "أحيانًا الرسائل ما تكون ضغط… تكون مجرد محاولة صادقة 🤍",
+    "الهدوء اختيار… مو ضعف 🌿",
+    "المشاعر الحقيقية ما تعرف الكبرياء 🤍"
+];
+
+function startMusic(){
+    if(!musicStarted){
+        document.getElementById("bgMusic").play();
+        musicStarted = true;
+    }
+}
+
+function refuse(){
+    startMusic();
+    noCount++;
+    document.getElementById("title").innerText = messages[Math.min(noCount-1, messages.length-1)];
+
+    const noBtn = document.getElementById("noBtn");
+    if(noCount >= 3){
+        noBtn.style.opacity = "0";
+        setTimeout(()=> noBtn.style.display="none", 400);
+    }
+}
+
+function openCard(){
+    startMusic();
+    document.getElementById("main").style.display = "none";
+    document.getElementById("card").style.display = "block";
+
+    const msg = `
+يمكن صار كلام كثير… ويمكن صار وجع أكثر.<br><br>
+بس الحقيقة البسيطة هي:<br>
+أنا إنسان غلط، مو إنسان سيء.<br><br>
+ما كنت ألعب، ولا أستغل، ولا أمثل… كنت صادق.<br>
+ولو صار مني شي وجعك، فأنا أعتذر بصدق،<br>
+لأن المشاعر الحقيقية ما تعرف الكبرياء.<br><br>
+— شخص كان صادق معك فعلًا 💙
+    `;
+    document.getElementById("msgBox").innerHTML = msg;
+
+    const time = new Date().toLocaleString();
+    localStorage.setItem("openTime", time);
+    document.getElementById("logTime").innerText = "تم فتح الرسالة في: " + time;
+}
+
+/* قلوب */
+setInterval(() => {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = "💗";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.animationDuration = (6 + Math.random()*4) + "s";
+    document.body.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 10000);
+}, 800);
+</script>
+
+</body>
+</html>
